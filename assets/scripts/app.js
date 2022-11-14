@@ -5,6 +5,7 @@ const modalCancelButton = modalElement.querySelector(".btn--passive")
 const modalAddMovieButton = modalElement.querySelector(".btn--success")
 const userInputElements = modalElement.querySelectorAll("input")
 const movieEntriesElement = document.getElementById("entry-text")
+const movieList = document.getElementById("movie-list")
 
 const movies = []
 
@@ -38,6 +39,7 @@ function addMovieHandler() {
   }
 
   const newMovie = {
+    id: Math.random().toString(),
     title: titleInput,
     image: imageUrlInput,
     rating: ratingInput,
@@ -47,7 +49,7 @@ function addMovieHandler() {
   toggleMovieModal()
   clearUserInputs()
   updateUI()
-  renderNewMovieElement(titleInput, imageUrlInput, ratingInput)
+  renderNewMovieElement(newMovie.id, newMovie.title, newMovie.image, newMovie.rating)
 }
 
 function clearUserInputs() {
@@ -64,7 +66,7 @@ function updateUI() {
   }
 }
 
-function renderNewMovieElement(title, imageUrl, rating) {
+function renderNewMovieElement(id, title, imageUrl, rating) {
   const newMovieElement = document.createElement('li')
   newMovieElement.className = 'movie-element'
   newMovieElement.innerHTML = `
@@ -77,8 +79,23 @@ function renderNewMovieElement(title, imageUrl, rating) {
     </div>
   `
 
-  const movieList = document.getElementById("movie-list")
+  newMovieElement.addEventListener('click', deleteMovieHandler.bind(null, id))
+
   movieList.append(newMovieElement)
+}
+
+function deleteMovieHandler(movieId) {
+  let movieIndex = 0
+  for (const movie of movies) {
+    if (movie.id === movieId) {
+      break
+    }
+    movieIndex++
+  }
+
+  movies.splice(movieIndex, 1)
+
+  movieList.children[movieIndex].remove()
 }
 
 startAddMovieButton.addEventListener('click', toggleMovieModal)
