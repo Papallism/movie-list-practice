@@ -10,18 +10,14 @@ const deleteMovieModal = document.getElementById("delete-modal")
 
 const movies = []
 
-function toggleBackdrop() {
-  backdrop.classList.toggle('visible')
-}
-
 function openMovieModal() {
   modalElement.classList.add('visible')
-  toggleBackdrop()
+  backdrop.classList.add('visible')
 }
 
 function closeMovieModal() {
   modalElement.classList.remove('visible')
-  toggleBackdrop()
+  backdrop.classList.remove('visible')
 }
 
 function backdropClickHandler() {
@@ -33,6 +29,7 @@ function backdropClickHandler() {
 function cancelAddMovieHandler() {
   closeMovieModal()
   clearUserInputs()
+  backdrop.classList.remove('visible')
 }
 
 function addMovieHandler() {
@@ -58,6 +55,7 @@ function addMovieHandler() {
   clearUserInputs()
   updateUI()
   renderNewMovieElement(newMovie.id, newMovie.title, newMovie.image, newMovie.rating)
+  backdrop.classList.remove('visible')
 }
 
 function clearUserInputs() {
@@ -104,15 +102,30 @@ function deleteMovie(movieId) {
   movies.splice(movieIndex, 1)
 
   movieList.children[movieIndex].remove()
+
+  closeDeleteMovieModal()
+  backdrop.classList.remove('visible')
 }
 
 function deleteMovieHandler(movieId) {
   deleteMovieModal.classList.add('visible')
-  toggleBackdrop()
+  backdrop.classList.add('visible')
+
+  const cancelDeleteMovieButton = deleteMovieModal.querySelector('.btn--passive')
+
+  let confirmDeleteMovieButton = deleteMovieModal.querySelector('.btn--danger')
+  confirmDeleteMovieButton.replaceWith(confirmDeleteMovieButton.cloneNode(true))
+  confirmDeleteMovieButton = deleteMovieModal.querySelector('.btn--danger')
+
+  cancelDeleteMovieButton.removeEventListener('click', closeDeleteMovieModal)
+  cancelDeleteMovieButton.addEventListener('click', closeDeleteMovieModal)
+
+  confirmDeleteMovieButton.addEventListener('click', deleteMovie.bind(null, movieId))
 }
 
 function closeDeleteMovieModal() {
   deleteMovieModal.classList.remove('visible')
+  backdrop.classList.remove('visible')
 }
 
 startAddMovieButton.addEventListener('click', openMovieModal)
